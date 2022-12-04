@@ -13,9 +13,9 @@ class DataAccess {
             Item: {
                 User: user,
                 Template: template,
+                Status: "OK",
                 Content: content,
-                Loves: 0,
-                Downloads: 0,
+                Popularity: 0,
                 Timestamp: new Date().toISOString()
             }
         };
@@ -48,75 +48,79 @@ class DataAccess {
         return this.query(params);
     }
 
-    async getMostLovedTemplates() {
+    async getMostPopularTemplates(filter) {
         const params = {
-            ProjectionExpression: "#user, Template, Content, Loves, Downloads",
-            ExpressionAttributeNames: {
-                "#user": "User"
-            },
+            ProjectionExpression: "#status, #user, Template, Content, Popularity",
             TableName: this.table,
-            IndexName: 'Loves-Template-index',
-            Limit: 100
-        };
-
-        return this.scan(params)
-    }
-
-    async getMostDownloadedTemplates(filter) {
-        const params = {
-            ProjectionExpression: "#user, Template, Content, Loves, Downloads",
+            IndexName: 'Status-Popularity-index',
+            KeyConditionExpression: '#status = :value',
+            ScanIndexForward: false,
             ExpressionAttributeNames: {
-                "#user": "User"
+                "#status": "Status",
+                "#user": "User",
             },
-            TableName: this.table,
-            IndexName: 'Downloads-Template-index',
+            ExpressionAttributeValues: {
+                ':value': "OK",
+            },
             Limit: 100
         };
 
         if(filter) {
             params.FilterExpression = `contains(Template, :template)`
-            params.ExpressionAttributeValues = { ":template": filter }
+            params.ExpressionAttributeValues[":template"] = filter;
         }
 
-        return this.scan(params)
+        return this.query(params)
     }
 
-    async getMostRecentTemplates() {
+    async getMostRecentTemplates(filter) {
         const params = {
-            ProjectionExpression: "#timestamp, #user, Template, Content, Loves, Downloads",
+            ProjectionExpression: "#status, #timestamp, #user, Template, Content, Popularity",
             ExpressionAttributeNames: {
+                "#status": "Status",
                 "#user": "User",
                 "#timestamp": "Timestamp"
             },
+            ExpressionAttributeValues: {
+                ':value': "OK",
+            },
+            ScanIndexForward: false,
             TableName: this.table,
-            IndexName: 'Timestamp-index',
+            IndexName: 'Status-Timestamp-index',
+            KeyConditionExpression: '#status = :value',
             Limit: 100
         };
 
-        return this.scan(params)
+        if(filter) {
+            params.FilterExpression = `contains(Template, :template)`
+            params.ExpressionAttributeValues[":template"] = filter;
+        }
+
+        return this.query(params)
     }
 
-    async incrementDownloads(user, template) {
+    async incrementPopularity(user, template, amount) {
         return this.update({
             TableName: this.table,
             Key: { 
                 User: user,
                 Template: template
             },
-            ExpressionAttributeValues: { ":inc": 1 },
-            UpdateExpression: "ADD Downloads :inc"
+            ExpressionAttributeValues: { ":inc": amount },
+            UpdateExpression: "ADD Popularity :inc"
         })
     }
 
-    async incrementLoves(user, template) {
+    async updateStatus(user, template, status) {
         return this.update({
             TableName: this.table,
             Key: { 
                 User: user,
                 Template: template
             },
-            ExpressionAttributeValues: { ":inc": 1 },
-            UpdateExpression: "ADD Loves :inc"
+            UpdateExpression: "SET #status = :status",
+            ExpressionAttributeNames: { "#status": "Status" },
+            ExpressionAttributeValues: { ":status": status }
         })
     }
 
