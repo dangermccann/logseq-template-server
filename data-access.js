@@ -2,9 +2,10 @@ const AWS = require('aws-sdk')
 const DynamoDB = AWS.DynamoDB
 
 class DataAccess {
-    constructor(region, table) {
+    constructor(region, table, userLovesTable) {
         this.dynamoDbClient = new DynamoDB.DocumentClient({ region: region || 'us-east-1' })
         this.table = table || 'logseq-templates-test';
+        this.userLovesTable = userLovesTable || 'logseq-templates-user-loves';
     }
     
     async insertTemplate(user, template, content) {
@@ -20,17 +21,7 @@ class DataAccess {
             }
         };
 
-        return new Promise((resolve, reject) => { 
-            this.dynamoDbClient.put(params, (err, data) => {
-                if (err) {
-                    console.log(err);
-                    reject(data);
-                }
-                else {
-                    resolve(err);
-                }
-            })
-        });
+        return this.put(params);
     }
 
     async getUserTemplates(user) {
@@ -133,16 +124,47 @@ class DataAccess {
             }
         };
         
-        return new Promise((resolve, reject) => { 
-            this.dynamoDbClient.delete(params, (error, data) => {
-                if (error) {
-                    console.log("DynamoDB delete error", error);
-                    reject(error)
-                } else {
-                    resolve(data)
-                }
-            });
-        })
+        return this.delete(params)
+    }
+
+    async getUserLoves(user) {
+        const params = {
+            TableName: this.userLovesTable,
+            KeyConditionExpression: '#user = :value',
+            ExpressionAttributeNames: {
+                "#user": "User"
+            },
+            ExpressionAttributeValues: {
+                ':value': user,
+            },
+        };
+
+        return this.query(params);
+    }
+
+    async addUserLove(user, lovedUser, lovedTemplate) {
+        const params = {
+            TableName: this.userLovesTable,
+            Item: {
+                User: user,
+                LovedTemplate: lovedUser + '\n' + lovedTemplate,
+                Timestamp: new Date().toISOString()
+            }
+        };
+
+        return this.put(params);
+    }
+
+    async removeUserLove(user, lovedUser, lovedTemplate) {
+        const params = {
+            TableName: this.userLovesTable,
+            Key: { 
+                User: user,
+                LovedTemplate: lovedUser + '\n' + lovedTemplate
+            }
+        };
+        
+        return this.delete(params)
     }
 
     async scan(params) {
@@ -164,6 +186,20 @@ class DataAccess {
                 }
             });
         })
+    }
+    
+    async put(params) {
+        return new Promise((resolve, reject) => { 
+            this.dynamoDbClient.put(params, (error, data) => {
+                if (error) {
+                    console.log("DynamoDB put error", error);
+                    reject(error);
+                }
+                else {
+                    resolve(data);
+                }
+            })
+        });
     }
 
     async update(params) {
@@ -187,6 +223,19 @@ class DataAccess {
                     reject(error)
                 } else {
                     resolve(data.Items)
+                }
+            });
+        })
+    }
+
+    async delete(params) {
+        return new Promise((resolve, reject) => { 
+            this.dynamoDbClient.delete(params, (error, data) => {
+                if (error) {
+                    console.log("DynamoDB delete error", error);
+                    reject(error)
+                } else {
+                    resolve(data)
                 }
             });
         })
