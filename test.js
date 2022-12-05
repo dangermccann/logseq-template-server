@@ -4,6 +4,7 @@ data = require('./data-access')
 */
 
 const dataAccess = require('./data-access')
+const infra = require('./infra')
 
 exports.createItems = async function() {
     let count = 100;
@@ -19,4 +20,38 @@ exports.deleteItems = async function() {
         await dataAccess.deleteTemplate(`user ${i}`, `Template Name ${i}`)
     }
     console.log(`Deleted ${count} templates`)
+}
+
+exports.setup = async function() {
+    await infra.createMainTable()
+    console.log('Main table created')
+    waitForTable(infra.table)
+    console.log('Main table is ready')
+
+    await infra.createUserLovesTable()
+    console.log('UserLoves table created')
+    await waitForTable(infra.userLovesTable)
+    console.log('UserLoves table is ready')
+}
+
+exports.tearDown = async function() {
+    await infra.deleteMainTable()
+    await infra.deleteUserLovesTable()
+}
+
+async function waitForTable(name) {
+    while(true) {
+        await delay(1000);
+        let poll = await infra.describeTable(name)
+        if(poll.Table.TableStatus === 'ACTIVE')
+            break;
+    }
+}
+
+async function delay(amount) {
+    return new Promise((resolve) => { 
+        setTimeout(() => {
+            resolve()
+        }, amount);
+    })
 }
