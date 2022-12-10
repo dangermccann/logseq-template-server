@@ -1,5 +1,6 @@
 const express = require('express')
 const AWS = require('aws-sdk')
+const cors = require('cors')
 const DynamoDB = AWS.DynamoDB
 
 const app = express()
@@ -8,6 +9,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const data = require('./data-access')
+
+// TODO: do this only for dev environment 
+app.use(cors({
+    origin: 'http://localhost:1234'
+}));
+app.use(cors({
+    methods: ['GET','POST','DELETE','UPDATE','PUT','PATCH']
+}));
+
 
 app.get('/', (req, res) => {
     res.send('Server is alive')
