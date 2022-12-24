@@ -52,6 +52,10 @@ class Infra {
                     AttributeType: 'S'
                 },
                 {
+                    AttributeName: 'Description',
+                    AttributeType: 'S'
+                },
+                {
                     AttributeName: 'Popularity',
                     AttributeType: 'N'
                 },
@@ -88,7 +92,7 @@ class Infra {
                         }                        
                     ],
                     Projection: {
-                        NonKeyAttributes: ['Content', 'Template', 'User'],
+                        NonKeyAttributes: ['Content', 'Template', 'User', 'Description'],
                         ProjectionType: 'INCLUDE'
                     }
                 },
@@ -105,7 +109,7 @@ class Infra {
                         }                        
                     ],
                     Projection: {
-                        NonKeyAttributes: ['Content', 'Template', 'User', 'Popularity'],
+                        NonKeyAttributes: ['Content', 'Template', 'User', 'Popularity', 'Description'],
                         ProjectionType: 'INCLUDE'
                     }
                 }

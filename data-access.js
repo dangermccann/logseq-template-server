@@ -4,7 +4,7 @@ const DynamoDB = AWS.DynamoDB
 class DataAccess {
     constructor(region, table, userLovesTable) {
         this.dynamoDbClient = new DynamoDB.DocumentClient({ region: region || 'us-east-1' })
-        this.table = table || 'logseq-templates-test';
+        this.table = table || 'logseq-templates';
         this.userLovesTable = userLovesTable || 'logseq-templates-user-loves';
     }
     
