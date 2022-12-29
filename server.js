@@ -43,7 +43,7 @@ app.get('/templates', async (req, res) => {
 
 app.put('/template', async (req, res) => {
     try {
-        res.send(await data.insertTemplate(req.body.user, req.body.template, req.body.content))
+        res.send(await data.insertTemplate(req.body.user, req.body.template, req.body.description, req.body.content))
     }
     catch(e) {
         handleError(res, e)

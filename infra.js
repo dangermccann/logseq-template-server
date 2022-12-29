@@ -52,10 +52,6 @@ class Infra {
                     AttributeType: 'S'
                 },
                 {
-                    AttributeName: 'Description',
-                    AttributeType: 'S'
-                },
-                {
                     AttributeName: 'Popularity',
                     AttributeType: 'N'
                 },

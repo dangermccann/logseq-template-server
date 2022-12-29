@@ -8,13 +8,14 @@ class DataAccess {
         this.userLovesTable = userLovesTable || 'logseq-templates-user-loves';
     }
     
-    async insertTemplate(user, template, content) {
+    async insertTemplate(user, template, description, content) {
         const params = {
             TableName: this.table,
             Item: {
                 User: user,
                 Template: template,
                 Status: "OK",
+                Description: description,
                 Content: content,
                 Popularity: 0,
                 Timestamp: new Date().toISOString()
@@ -41,7 +42,7 @@ class DataAccess {
 
     async getMostPopularTemplates(filter) {
         const params = {
-            ProjectionExpression: "#status, #user, Template, Content, Popularity",
+            ProjectionExpression: "#status, #user, Template, Description, Content, Popularity",
             TableName: this.table,
             IndexName: 'Status-Popularity-index',
             KeyConditionExpression: '#status = :value',
@@ -66,7 +67,7 @@ class DataAccess {
 
     async getMostRecentTemplates(filter) {
         const params = {
-            ProjectionExpression: "#status, #timestamp, #user, Template, Content, Popularity",
+            ProjectionExpression: "#status, #timestamp, #user, Template, Description, Content, Popularity",
             ExpressionAttributeNames: {
                 "#status": "Status",
                 "#user": "User",
