@@ -88,7 +88,7 @@ class Infra {
                         }                        
                     ],
                     Projection: {
-                        NonKeyAttributes: ['Content', 'Template', 'User', 'Description'],
+                        NonKeyAttributes: ['Content', 'Template', 'User', 'Description', 'SearchTerm'],
                         ProjectionType: 'INCLUDE'
                     }
                 },
@@ -105,7 +105,7 @@ class Infra {
                         }                        
                     ],
                     Projection: {
-                        NonKeyAttributes: ['Content', 'Template', 'User', 'Popularity', 'Description'],
+                        NonKeyAttributes: ['Content', 'Template', 'User', 'Popularity', 'Description', 'SearchTerm'],
                         ProjectionType: 'INCLUDE'
                     }
                 }

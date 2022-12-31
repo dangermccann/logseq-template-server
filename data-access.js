@@ -18,7 +18,8 @@ class DataAccess {
                 Description: description,
                 Content: content,
                 Popularity: 0,
-                Timestamp: new Date().toISOString()
+                Timestamp: new Date().toISOString(),
+                SearchTerm: `${template.toLowerCase()} ${description.toLowerCase()}`
             }
         };
 
@@ -58,8 +59,8 @@ class DataAccess {
         };
 
         if(filter) {
-            params.FilterExpression = `contains(Template, :template)`
-            params.ExpressionAttributeValues[":template"] = filter;
+            params.FilterExpression = `contains(SearchTerm, :filter)`
+            params.ExpressionAttributeValues[":filter"] = filter.toLowerCase();
         }
 
         return this.query(params)
@@ -84,8 +85,8 @@ class DataAccess {
         };
 
         if(filter) {
-            params.FilterExpression = `contains(Template, :template)`
-            params.ExpressionAttributeValues[":template"] = filter;
+            params.FilterExpression = `contains(SearchTerm, :filter)`
+            params.ExpressionAttributeValues[":filter"] = filter.toLowerCase();
         }
 
         return this.query(params)
