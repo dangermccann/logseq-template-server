@@ -5,7 +5,7 @@
     "author": "John McCann",
     "license": "MIT",
     "scripts": {
-        "dev": "node server.js"
+        "start": "node server.js"
     },
     "dependencies": {
         "aws-sdk": "^2.1267.0",
