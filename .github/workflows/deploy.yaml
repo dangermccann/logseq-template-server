@@ -25,8 +25,9 @@ jobs:
         env:
           CI: true
         run: |
+          npm install
           npm ci 
       - name: deploy
         run: |
-          zip -j deploy.zip ./* #--> Zip the Code As we know lambda function accept the zip file.
+          zip -j deploy.zip ./index.js ./data-access.js
           aws lambda update-function-code --function-name=logseq-template-server --zip-file=fileb://deploy.zip 
