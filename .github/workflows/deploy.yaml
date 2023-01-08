@@ -25,7 +25,6 @@ jobs:
         env:
           CI: true
         run: |
-          npm install
           npm ci 
       - name: deploy
         run: |
