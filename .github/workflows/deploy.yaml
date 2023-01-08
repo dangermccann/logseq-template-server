@@ -29,4 +29,5 @@ jobs:
       - name: deploy
         run: |
           zip -j deploy.zip ./index.js ./data-access.js
+          aws lambda publish-version --function-name=logseq-template-server
           aws lambda update-function-code --function-name=logseq-template-server --zip-file=fileb://deploy.zip 
