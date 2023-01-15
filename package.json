@@ -1,7 +1,7 @@
 {
     "name": "logseq-templates-server",
-    "version": "0.1",
-    "description": "TBD...",
+    "version": "0.2",
+    "description": "API Server for Logseq Template Gallery",
     "author": "John McCann",
     "license": "MIT",
     "scripts": {
